@@ -1,7 +1,7 @@
 {
   "name": "screen-recorder-app",
   "productName": "ScreenRecorderApp",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Free screen recorder and video editor for macOS and Windows. An App by NexaSecure Cloud and AI.",
   "main": "out/main/index.js",
   "license": "MIT",
@@ -95,9 +95,7 @@
         }
       ],
       "category": "public.app-category.video",
-      "hardenedRuntime": true,
-      "entitlements": "resources/entitlements.mac.plist",
-      "entitlementsInherit": "resources/entitlements.mac.plist",
+      "hardenedRuntime": false,
       "extendInfo": {
         "NSMicrophoneUsageDescription": "ScreenRecorderApp records your microphone when you turn it on for a recording.",
         "NSCameraUsageDescription": "ScreenRecorderApp records your camera when you turn it on for a recording."
@@ -108,7 +106,8 @@
           "to": "ffmpeg"
         }
       ],
-      "artifactName": "${productName}-${version}-mac-${arch}.${ext}"
+      "artifactName": "${productName}-${version}-mac-${arch}.${ext}",
+      "identity": "-"
     },
     "win": {
       "target": [

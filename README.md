@@ -11,8 +11,15 @@ Get the latest installer from the [Releases page](https://github.com/atifrather0
 | macOS, Intel | `ScreenRecorderApp-<version>-mac-x64.dmg` |
 | Windows 10 / 11 (64-bit) | `ScreenRecorderApp-<version>-windows-x64-setup.exe` |
 
-The builds are not code-signed yet: on macOS right-click the app and choose **Open** the first time; on Windows choose
-**More info › Run anyway** in the SmartScreen prompt.
+The builds are not signed with an Apple Developer ID or a Windows certificate yet, so the first launch needs one extra step:
+
+- **macOS:** open the app once; when macOS says it can't verify the developer, click **Done**, then go to
+  **System Settings › Privacy & Security** and click **Open Anyway**. If macOS instead says the app **"is damaged and can't be
+  opened"**, run this once in Terminal and open it again:
+  ```bash
+  xattr -cr /Applications/ScreenRecorderApp.app
+  ```
+- **Windows:** in the SmartScreen prompt choose **More info › Run anyway**.
 
 A desktop screen recorder and video editor for macOS, Windows and Linux, built with Electron, React and ffmpeg.
 
