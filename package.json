@@ -1,0 +1,185 @@
+{
+  "name": "screen-recorder-app",
+  "productName": "ScreenRecorderApp",
+  "version": "0.4.0",
+  "description": "Free screen recorder and video editor for macOS and Windows. An App by NexaSecure Cloud and AI.",
+  "main": "out/main/index.js",
+  "license": "MIT",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "start": "electron-vite preview",
+    "type-check": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run",
+    "format": "prettier --write src",
+    "dist": "npm run build && electron-builder",
+    "dist:mac": "node scripts/fetch-ffmpeg.mjs darwin-arm64 darwin-x64 && npm run build && electron-builder --mac",
+    "dist:win": "node scripts/fetch-ffmpeg.mjs win32-x64 && npm run build && electron-builder --win --x64",
+    "predev": "node scripts/copy-ort.mjs",
+    "prebuild": "node scripts/copy-ort.mjs",
+    "notices": "node scripts/gen-notices.mjs && cp resources/THIRD_PARTY_NOTICES.md THIRD_PARTY_NOTICES.md"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.13.0"
+  },
+  "devDependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "@ffprobe-installer/ffprobe": "^2.1.2",
+    "@huggingface/transformers": "^4.3.2",
+    "@types/node": "^26.6.6",
+    "@types/react": "^18.3.31",
+    "@types/react-dom": "^18.3.7",
+    "@vitejs/plugin-react": "5.2",
+    "autoprefixer": "^10.7.0",
+    "clsx": "^2.1.1",
+    "electron": "^45.4.1",
+    "electron-builder": "^26.18.0",
+    "electron-vite": "^6.0.0",
+    "lucide-react": "^1.78.0",
+    "playwright": "^1.65.1",
+    "postcss": "^8.5.33",
+    "prettier": "^3.10.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tailwind-merge": "^3.7.1",
+    "tailwindcss": "^3.4.19",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.8",
+    "vitest": "^3.2.7",
+    "zustand": "^5.1.0"
+  },
+  "allowScripts": {
+    "@ffmpeg-installer/darwin-arm64@4.1.5": true,
+    "@ffprobe-installer/darwin-arm64@5.0.1": true,
+    "esbuild@0.28.2": true,
+    "fsevents@2.3.3": true,
+    "electron-winstaller@5.4.0": true,
+    "onnxruntime-node": false,
+    "protobufjs": false
+  },
+  "build": {
+    "appId": "com.nexasecure.screenrecorderapp",
+    "productName": "ScreenRecorderApp",
+    "directories": {
+      "output": "release",
+      "buildResources": "resources"
+    },
+    "files": [
+      "out/**",
+      "package.json",
+      "!node_modules/@ffmpeg-installer/**",
+      "!node_modules/@ffprobe-installer/**"
+    ],
+    "fileAssociations": [
+      {
+        "ext": "srproj",
+        "name": "ScreenRecorderApp Project",
+        "role": "Editor"
+      }
+    ],
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "arm64",
+            "x64"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "arm64",
+            "x64"
+          ]
+        }
+      ],
+      "category": "public.app-category.video",
+      "hardenedRuntime": true,
+      "entitlements": "resources/entitlements.mac.plist",
+      "entitlementsInherit": "resources/entitlements.mac.plist",
+      "extendInfo": {
+        "NSMicrophoneUsageDescription": "ScreenRecorderApp records your microphone when you turn it on for a recording.",
+        "NSCameraUsageDescription": "ScreenRecorderApp records your camera when you turn it on for a recording."
+      },
+      "extraResources": [
+        {
+          "from": "vendor/darwin-${arch}",
+          "to": "ffmpeg"
+        }
+      ],
+      "artifactName": "${productName}-${version}-mac-${arch}.${ext}"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "extraResources": [
+        {
+          "from": "vendor/win32-x64",
+          "to": "ffmpeg",
+          "filter": [
+            "*.exe"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "perMachine": false,
+      "createDesktopShortcut": true,
+      "artifactName": "${productName}-${version}-windows-x64-setup.${ext}",
+      "license": "LICENSE",
+      "shortcutName": "ScreenRecorderApp"
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "category": "AudioVideo"
+    },
+    "extraResources": [
+      {
+        "from": "resources/tray",
+        "to": "tray"
+      },
+      {
+        "from": "resources/icon.png",
+        "to": "icon.png"
+      },
+      {
+        "from": "resources/THIRD_PARTY_NOTICES.md",
+        "to": "THIRD_PARTY_NOTICES.md"
+      },
+      {
+        "from": "LICENSE",
+        "to": "LICENSE.txt"
+      },
+      {
+        "from": "resources/licenses",
+        "to": "licenses"
+      }
+    ],
+    "copyright": "Copyright \u00a9 2026 NexaSecure Cloud and AI",
+    "dmg": {
+      "title": "ScreenRecorderApp ${version}"
+    }
+  },
+  "author": {
+    "name": "NexaSecure Cloud and AI"
+  },
+  "homepage": "https://github.com/atifrather001/ScreenRecorderApp",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/atifrather001/ScreenRecorderApp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/atifrather001/ScreenRecorderApp/issues"
+  }
+}
