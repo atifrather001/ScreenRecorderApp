@@ -76,7 +76,15 @@ function sendMain(channel: string, ...args: unknown[]): void {
 }
 
 /** Show (or re-create) the main window. Messages wait until a freshly created window has loaded. */
+/** Keep the app a normal Dock / Cmd-Tab app with its own menu bar (overlay windows must never change this). */
+function ensureRegularApp(): void {
+  if (process.platform !== 'darwin') return;
+  app.setActivationPolicy('regular');
+  void app.dock?.show();
+}
+
 function ensureMainWindow(): Promise<BrowserWindow> {
+  ensureRegularApp();
   if (process.platform === 'darwin') app.focus({ steal: true });
   if (mainWindow && !mainWindow.isDestroyed()) {
     if (mainWindow.isMinimized()) mainWindow.restore();
@@ -419,6 +427,7 @@ function updateRecorderWindows(status: RecorderStatus, target?: RecordingTarget)
   }
   if (status.phase !== 'countdown' && countdownWin && !countdownWin.isDestroyed()) countdownWin.close();
   if (!active && controlBar && !controlBar.isDestroyed()) controlBar.close();
+  if (!active) ensureRegularApp();
 
   for (const w of [controlBar, countdownWin, borderWin, captionWin]) if (w && !w.isDestroyed()) w.webContents.send('recorder:status', status);
 

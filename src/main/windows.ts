@@ -96,7 +96,7 @@ export function createControlBar(display: Display): BrowserWindow {
     webPreferences: webPreferences(),
   });
   win.setAlwaysOnTop(true, 'screen-saver');
-  win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+  win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true, skipTransformProcessType: true });
   win.setContentProtection(true);
   win.once('ready-to-show', () => win.showInactive());
   loadRoute(win, '/controlbar');
@@ -149,7 +149,7 @@ export function createRegionSelector(display: Display): BrowserWindow {
     webPreferences: webPreferences(),
   });
   win.setAlwaysOnTop(true, 'screen-saver');
-  win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+  win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true, skipTransformProcessType: true });
   win.once('ready-to-show', () => {
     win.show();
     win.focus();
@@ -189,7 +189,7 @@ export function createRecordingBorder(display: Display, region: { x: number; y: 
   });
   win.setIgnoreMouseEvents(true);
   win.setAlwaysOnTop(true, 'screen-saver');
-  win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+  win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true, skipTransformProcessType: true });
   win.setContentProtection(true);
   win.once('ready-to-show', () => win.showInactive());
   loadRoute(win, '/border');
@@ -218,7 +218,7 @@ export function createCaptionBar(display: Display): BrowserWindow {
   });
   win.setIgnoreMouseEvents(true);
   win.setAlwaysOnTop(true, 'screen-saver');
-  win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+  win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true, skipTransformProcessType: true });
   win.setContentProtection(true);
   win.once('ready-to-show', () => win.showInactive());
   loadRoute(win, '/captions');
