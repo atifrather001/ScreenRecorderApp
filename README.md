@@ -63,8 +63,17 @@ npm run dist:win   # build an unsigned Windows installer (works from a Mac too)
 ### macOS permissions
 
 The first time you record, macOS asks for Screen Recording access. Allow the app in
-System Settings › Privacy & Security › Screen Recording, then quit and reopen it. During `npm run dev` the
-entry is called **Electron**. Microphone and camera access is requested when you switch them on.
+System Settings › Privacy & Security › Screen Recording, then click **Quit & Reopen** in the app. During `npm run dev`
+the entry is called **Electron**. Microphone and camera access is requested when you switch them on.
+
+If the app keeps saying permission is denied even though it's switched on (this can happen after installing an
+update of version 0.4.2 or earlier), reset the entry and allow it again:
+
+```bash
+tccutil reset ScreenCapture com.nexasecure.screenrecorderapp
+```
+
+Since 0.4.3 the permission is kept across updates. Keep the app in the Applications folder.
 
 ## How it works
 

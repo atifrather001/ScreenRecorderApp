@@ -1,7 +1,7 @@
 {
   "name": "screen-recorder-app",
   "productName": "ScreenRecorderApp",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "description": "Free screen recorder and video editor for macOS and Windows. An App by NexaSecure Cloud and AI.",
   "main": "out/main/index.js",
   "license": "MIT",
@@ -168,7 +168,8 @@
     "copyright": "Copyright \u00a9 2026 NexaSecure Cloud and AI",
     "dmg": {
       "title": "ScreenRecorderApp ${version}"
-    }
+    },
+    "afterSign": "scripts/after-sign.cjs"
   },
   "author": {
     "name": "NexaSecure Cloud and AI"

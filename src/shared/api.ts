@@ -144,4 +144,5 @@ export interface DesktopAPI {
   thirdPartyNotices(): Promise<string>;
   openExternal(url: string): Promise<void>;
   openAbout(): void;
+  relaunch(): void;
 }

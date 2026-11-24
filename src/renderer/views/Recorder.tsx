@@ -215,11 +215,14 @@ export function Recorder() {
         {perm && isMac() && perm.screen !== 'granted' && (
           <div className="mx-6 mt-4 flex items-center gap-3 rounded-lg border border-amber-700/60 bg-amber-950/40 px-4 py-2.5 text-amber-200">
             <span className="flex-1">
-              Screen recording permission is “{perm.screen}”. macOS needs you to allow this app in Privacy & Security › Screen Recording (and restart it) before
-              screens can be captured.
+              macOS hasn't given this app Screen Recording access yet. Turn on <b>ScreenRecorderApp</b> in Privacy & Security › Screen Recording, then click{' '}
+              <b>Quit & Reopen</b> (macOS only applies the change after a restart). If it's already on, remove it with the − button, add it again and reopen.
             </span>
             <Button size="sm" onClick={() => void window.api.openPermissionSettings('screen')}>
               Open settings
+            </Button>
+            <Button size="sm" variant="primary" onClick={() => window.api.relaunch()}>
+              Quit & Reopen
             </Button>
           </div>
         )}

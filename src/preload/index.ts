@@ -70,6 +70,7 @@ const api: DesktopAPI = {
   thirdPartyNotices: () => ipcRenderer.invoke('about:notices'),
   openExternal: (url) => ipcRenderer.invoke('shell:external', url),
   openAbout: () => ipcRenderer.send('about:open'),
+  relaunch: () => ipcRenderer.send('app:relaunch'),
 };
 
 contextBridge.exposeInMainWorld('api', api);

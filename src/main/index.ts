@@ -107,6 +107,36 @@ function recorderCommand(cmd: RecorderCommand): void {
   else sendMain('recorder:command', cmd);
 }
 
+/**
+ * macOS: offer to move the app into /Applications. Running it from a disk image or Downloads makes macOS treat each
+ * copy as a different app, which is a common reason Screen Recording permission "doesn't stick".
+ */
+function offerMoveToApplications(): void {
+  if (process.platform !== 'darwin' || !app.isPackaged || process.env.SRA_USER_DATA || app.isInApplicationsFolder()) return;
+  const choice = dialog.showMessageBoxSync({
+    type: 'question',
+    buttons: ['Move to Applications', 'Not Now'],
+    defaultId: 0,
+    cancelId: 1,
+    message: 'Move ScreenRecorderApp to your Applications folder?',
+    detail: 'macOS remembers Screen Recording and Microphone permission for the copy in Applications. Running it from somewhere else can make permissions stop working.',
+  });
+  if (choice !== 0) return;
+  try {
+    app.moveToApplicationsFolder({
+      conflictHandler: (type) => {
+        if (type === 'existsAndRunning') {
+          dialog.showMessageBoxSync({ type: 'info', message: 'Quit the copy in Applications first, then try again.' });
+          return false;
+        }
+        return true;
+      },
+    });
+  } catch (err) {
+    dialog.showErrorBox('Could not move the app', (err as Error).message);
+  }
+}
+
 let aboutWin: BrowserWindow | null = null;
 function openAbout(): void {
   if (aboutWin && !aboutWin.isDestroyed()) {
@@ -645,6 +675,11 @@ function setupIpc(): void {
     return undefined;
   });
   ipcMain.on('about:open', () => openAbout());
+  ipcMain.on('app:relaunch', () => {
+    if (lastStatus.phase !== 'idle') return;
+    app.relaunch();
+    app.exit(0);
+  });
 
   // ---- Native context menus ----
   ipcMain.handle('menu:popup', (e, items: ContextMenuItem[]) => {
@@ -724,6 +759,7 @@ app.whenReady().then(() => {
     buildTrayMenu();
   });
   registerShortcuts(s);
+  offerMoveToApplications();
   void ensureMainWindow();
 
   // Clicking the Dock icon brings the window back after it was closed.
