@@ -1,8 +1,13 @@
 import { useEffect, useState } from 'react';
+import type { RecorderStatus } from '@shared/types';
 
 export function Countdown() {
   const [n, setN] = useState<number | null>(null);
-  useEffect(() => window.api.onRecorderStatus((s) => setN(s.phase === 'countdown' ? s.countdown : null)), []);
+  useEffect(() => {
+    const apply = (s: RecorderStatus) => setN(s.phase === 'countdown' ? s.countdown : null);
+    void window.api.lastRecorderStatus().then(apply);
+    return window.api.onRecorderStatus(apply);
+  }, []);
   if (!n) return null;
   return (
     <div className="flex h-full items-center justify-center">

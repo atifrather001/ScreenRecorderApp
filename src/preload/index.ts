@@ -37,6 +37,7 @@ const api: DesktopAPI = {
 
   setRecorderStatus: (status, target) => ipcRenderer.send('recorder:status', status, target),
   onRecorderStatus: (cb) => listen('recorder:status', cb),
+  lastRecorderStatus: () => ipcRenderer.invoke('recorder:last-status'),
   sendRecorderCommand: (cmd) => ipcRenderer.send('recorder:command', cmd),
   onRecorderCommand: (cb) => listen('recorder:command', cb),
 

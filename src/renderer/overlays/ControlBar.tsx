@@ -5,7 +5,11 @@ import { formatTime } from '../lib/format';
 
 export function ControlBar() {
   const [s, setS] = useState<RecorderStatus>({ phase: 'countdown', elapsed: 0, countdown: 0, micLevel: 0 });
-  useEffect(() => window.api.onRecorderStatus(setS), []);
+  useEffect(() => {
+    const apply = setS;
+    void window.api.lastRecorderStatus().then(apply);
+    return window.api.onRecorderStatus(apply);
+  }, []);
   const cmd = window.api.sendRecorderCommand;
   const paused = s.phase === 'paused';
   return (

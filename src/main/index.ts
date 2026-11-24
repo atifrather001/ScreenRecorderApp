@@ -673,9 +673,15 @@ function setupIpc(): void {
   // ---- Shell ----
   ipcMain.handle('shell:reveal', (_e, p: string) => shell.showItemInFolder(p));
   ipcMain.handle('shell:open', async (_e, p: string) => {
-    mkdirSync(p.includes('.') && !existsSync(p) ? dirname(p) : p, { recursive: true });
-    await shell.openPath(p);
+    // Folders (like the recordings folder) are created if missing; files are opened in their default app.
+    if (!existsSync(p)) {
+      if (extname(p)) throw new Error(`File not found: ${p}`);
+      mkdirSync(p, { recursive: true });
+    }
+    const err = await shell.openPath(p);
+    if (err) throw new Error(err);
   });
+  ipcMain.handle('recorder:last-status', () => lastStatus);
   ipcMain.on('window:edited', (e, edited: boolean) => {
     BrowserWindow.fromWebContents(e.sender)?.setDocumentEdited(edited);
   });

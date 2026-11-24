@@ -78,6 +78,7 @@ class RecorderEngine {
       micLevel: this.micLevel(),
       caption: this.caption,
       captionsActive: !!this.captioner,
+      captionBacklog: this.captioner?.backlog ?? 0,
     };
   }
 

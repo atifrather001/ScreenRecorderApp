@@ -203,6 +203,8 @@ export interface RecorderStatus {
   /** Latest live caption line, when live captions are on. */
   caption?: string;
   captionsActive?: boolean;
+  /** Speech chunks still waiting for transcription. */
+  captionBacklog?: number;
 }
 
 export type RecorderCommand = 'toggle' | 'pause' | 'resume' | 'stop' | 'cancel';

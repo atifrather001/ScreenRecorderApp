@@ -100,6 +100,11 @@ export function Recorder() {
       if (captions) {
         try {
           await transcriber.load(settings.ai.captionModel, (f, label) => setModelProgress({ f, label }));
+          // Without a GPU the larger models can't keep up in real time; use the fast model for live captions.
+          // ("Transcribe again" in the editor still uses the model chosen in Settings.)
+          if (transcriber.device === 'wasm' && settings.ai.captionModel !== 'onnx-community/whisper-tiny') {
+            await transcriber.load('onnx-community/whisper-tiny', (f, label) => setModelProgress({ f, label }));
+          }
         } catch (err) {
           captions = false;
           toast(`Live captions are off for this recording: the speech model could not load (${(err as Error).message}). You can still transcribe later in the editor.`, 'error');

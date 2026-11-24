@@ -105,6 +105,7 @@ export interface DesktopAPI {
   // Recorder status/command relay between the main window, control bar and global shortcuts
   setRecorderStatus(status: RecorderStatus, target?: RecordingTarget): void;
   onRecorderStatus(cb: (s: RecorderStatus) => void): () => void;
+  lastRecorderStatus(): Promise<RecorderStatus>;
   sendRecorderCommand(cmd: RecorderCommand): void;
   onRecorderCommand(cb: (cmd: RecorderCommand) => void): () => void;
 

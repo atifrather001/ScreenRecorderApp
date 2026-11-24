@@ -1,10 +1,15 @@
 import { useEffect, useState } from 'react';
+import type { RecorderStatus } from '@shared/types';
 import type { RecorderPhase } from '@shared/types';
 
 /** Red frame around the area being recorded. Amber while paused. */
 export function Border() {
   const [phase, setPhase] = useState<RecorderPhase>('recording');
-  useEffect(() => window.api.onRecorderStatus((s) => setPhase(s.phase)), []);
+  useEffect(() => {
+    const apply = (s: RecorderStatus) => setPhase(s.phase);
+    void window.api.lastRecorderStatus().then(apply);
+    return window.api.onRecorderStatus(apply);
+  }, []);
   const color = phase === 'paused' ? '#f59e0b' : '#ef4444';
   return (
     <div className="pointer-events-none fixed inset-0" style={{ border: `4px solid ${color}`, boxShadow: `0 0 12px ${color}88` }}>

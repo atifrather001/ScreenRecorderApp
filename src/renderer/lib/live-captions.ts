@@ -20,6 +20,8 @@ export class LiveCaptioner {
   private silent = 0;
   private voiced = 0;
   private pendingWork: Promise<void> = Promise.resolve();
+  /** Chunks waiting to be transcribed. */
+  backlog = 0;
 
   constructor(
     stream: MediaStream,
@@ -57,7 +59,10 @@ export class LiveCaptioner {
       this.voiced += dur;
     }
     const total = this.length / RATE;
-    if (total >= MAX_CHUNK || (total >= MIN_CHUNK && this.silent >= PAUSE)) this.flush();
+    // When transcription falls behind (slow CPU), send bigger chunks: fewer, longer runs catch up faster.
+    const max = this.backlog >= 2 ? MAX_CHUNK * 3 : MAX_CHUNK;
+    const min = this.backlog >= 2 ? MAX_CHUNK * 2 : MIN_CHUNK;
+    if (total >= max || (total >= min && this.silent >= PAUSE)) this.flush();
   }
 
   private flush() {
@@ -74,6 +79,7 @@ export class LiveCaptioner {
     this.silent = 0;
     this.voiced = 0;
     if (!hadVoice) return; // skip silence: Whisper invents text for it
+    this.backlog++;
     this.pendingWork = this.pendingWork.then(() =>
       transcriber
         .transcribe(audio, start, this.language)
@@ -82,7 +88,10 @@ export class LiveCaptioner {
           this.segments.push(...segs);
           this.onText(segs.map((s) => s.text).join(' '));
         })
-        .catch((err) => console.warn('Live caption chunk failed:', err)),
+        .catch((err) => console.warn('Live caption chunk failed:', err))
+        .finally(() => {
+          this.backlog--;
+        }),
     );
   }
 

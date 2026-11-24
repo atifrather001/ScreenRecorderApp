@@ -17,6 +17,8 @@ class Transcriber {
   private queue: Promise<unknown> = Promise.resolve();
   private files = new Map<string, { loaded: number; total: number }>();
   private onProgress: Progress | null = null;
+  /** 'webgpu' or 'wasm' once a model has loaded. */
+  device = '';
 
   private ensureWorker(): Worker {
     if (this.worker) return this.worker;
@@ -40,7 +42,10 @@ class Transcriber {
           this.pending.get(m.id)!.reject(new Error(m.message));
           this.pending.delete(m.id);
         } else this.loadError?.(new Error(m.message));
-      } else if (m.type === 'ready') this.loadDone?.();
+      } else if (m.type === 'ready') {
+        if (m.device !== 'cached') this.device = m.device;
+        this.loadDone?.();
+      }
     };
     this.worker = w;
     return w;

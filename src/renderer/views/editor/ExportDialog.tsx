@@ -72,7 +72,7 @@ export function ExportDialog({ onClose }: { onClose: () => void }) {
             <Button icon={<FolderOpen size={14} />} onClick={() => void window.api.revealInFolder(progress.outputPath!)}>
               Show in folder
             </Button>
-            <Button icon={<Play size={14} />} onClick={() => void window.api.openPath(progress.outputPath!)}>
+            <Button icon={<Play size={14} />} onClick={() => window.api.openPath(progress.outputPath!).catch((e) => toast(`Could not open the video: ${(e as Error).message}`, "error"))}>
               Play
             </Button>
             <Button variant="primary" onClick={onClose}>
